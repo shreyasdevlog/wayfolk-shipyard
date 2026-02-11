@@ -76,6 +76,8 @@ export default function ModeSwitcher({
               onPress={() => {
                 if (mode.key === "roamantic") {
                   router.push("/(tabs)/roamantic");
+                } else if (mode.key === "builders") {
+                  router.push("/(tabs)/builders");
                 } else {
                   onModeChange(mode.key);
                 }

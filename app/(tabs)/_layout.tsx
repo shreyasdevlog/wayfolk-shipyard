@@ -115,6 +115,19 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="builders"
+        options={{
+          title: "Builders",
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon
+              name={focused ? "construct" : "construct-outline"}
+              color={color}
+              focused={focused}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="myroute"
         options={{
           title: "My Route",
