@@ -14,6 +14,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useImageGeneration } from "@fastshot/ai";
+import { useRouter } from "expo-router";
 import ModeSwitcher from "@/components/ModeSwitcher";
 import Header from "@/components/Header";
 
@@ -108,7 +109,7 @@ const INITIAL_BUILDERS: Builder[] = [
 
 export default function BuildersScreen() {
   const insets = useSafeAreaInsets();
-  // const router = useRouter(); // Reserved for future navigation
+  const router = useRouter();
   const [builders, setBuilders] = useState<Builder[]>(INITIAL_BUILDERS);
   const [searchQuery, setSearchQuery] = useState("");
   const [sosMode, setSosMode] = useState(false);
@@ -389,7 +390,15 @@ export default function BuildersScreen() {
                   style={styles.requestButton}
                   activeOpacity={0.8}
                   onPress={() => {
-                    // Handle request help
+                    router.push({
+                      pathname: "/work-request",
+                      params: {
+                        name: builder.name,
+                        imageUrl: builder.imageUrl || "",
+                        hourlyRate: builder.hourlyRate.toString(),
+                        consultationFee: builder.consultationFee.toString(),
+                      },
+                    });
                   }}
                 >
                   <Ionicons name="call" size={20} color="#FFFFFF" />
