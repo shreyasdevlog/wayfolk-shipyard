@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 
-export type ModeType = "roamantic" | "routemate" | "builders";
+export type ModeType = "copilot" | "convoy" | "support";
 
 interface ModeSwitcherProps {
   activeMode: ModeType;
@@ -17,9 +17,9 @@ interface ModeSwitcherProps {
 }
 
 const MODES: { key: ModeType; label: string; subtitle: string }[] = [
-  { key: "roamantic", label: "Roamantic", subtitle: "Dating" },
-  { key: "routemate", label: "RouteMate", subtitle: "Friends" },
-  { key: "builders", label: "Builders", subtitle: "Help" },
+  { key: "copilot", label: "Co-Pilot", subtitle: "Dating & Connections" },
+  { key: "convoy", label: "Convoy", subtitle: "Friends & Group Travel" },
+  { key: "support", label: "Support", subtitle: "Field Repair & Marketplace" },
 ];
 
 const PADDING = 4;
@@ -74,9 +74,11 @@ export default function ModeSwitcher({
               style={styles.tab}
               activeOpacity={0.7}
               onPress={() => {
-                if (mode.key === "roamantic") {
+                if (mode.key === "copilot") {
                   router.push("/(tabs)/roamantic");
-                } else if (mode.key === "builders") {
+                } else if (mode.key === "convoy") {
+                  router.push("/(tabs)/myroute");
+                } else if (mode.key === "support") {
                   router.push("/(tabs)/builders");
                 } else {
                   onModeChange(mode.key);

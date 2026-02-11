@@ -16,7 +16,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useImageGeneration } from "@fastshot/ai";
 import { useRouter } from "expo-router";
 import ModeSwitcher from "@/components/ModeSwitcher";
-import Header from "@/components/Header";
+import GlobalHeader from "@/components/GlobalHeader";
 
 interface Builder {
   id: number;
@@ -206,9 +206,7 @@ export default function BuildersScreen() {
   if (isGenerating) {
     return (
       <View style={styles.container}>
-        <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
-          <Header />
-        </View>
+        <GlobalHeader />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#FF7043" />
           <Text style={styles.loadingText}>
@@ -229,9 +227,9 @@ export default function BuildersScreen() {
           { paddingBottom: insets.bottom + 90 },
         ]}
       >
-        <View style={[styles.headerSection, { paddingTop: insets.top + 12 }]}>
-          <Header />
-          <ModeSwitcher activeMode="builders" onModeChange={() => {}} />
+        <View style={styles.headerSection}>
+          <GlobalHeader includeSafeArea={false} />
+          <ModeSwitcher activeMode="support" onModeChange={() => {}} />
         </View>
 
         <View style={styles.heroSection}>
@@ -466,9 +464,6 @@ const styles = StyleSheet.create({
     color: "#D9C5B2",
     textAlign: "center",
     lineHeight: 24,
-  },
-  header: {
-    backgroundColor: "#1B2B21",
   },
   scrollView: {
     flex: 1,

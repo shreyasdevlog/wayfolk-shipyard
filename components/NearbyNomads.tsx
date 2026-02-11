@@ -18,7 +18,7 @@ interface NomadData {
 }
 
 const NOMADS_DATA: Record<ModeType, NomadData[]> = {
-  roamantic: [
+  copilot: [
     {
       id: "1",
       name: "Sierra Blackwood",
@@ -52,7 +52,7 @@ const NOMADS_DATA: Record<ModeType, NomadData[]> = {
       status: "Exploring",
     },
   ],
-  routemate: [
+  convoy: [
     {
       id: "5",
       name: "Kai Nakamura",
@@ -86,7 +86,7 @@ const NOMADS_DATA: Record<ModeType, NomadData[]> = {
       status: "Sunbathing",
     },
   ],
-  builders: [
+  support: [
     {
       id: "9",
       name: "Bear Kowalski",

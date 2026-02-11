@@ -25,7 +25,7 @@ interface MeetupData {
 }
 
 const MEETUPS_DATA: Record<ModeType, MeetupData[]> = {
-  roamantic: [
+  copilot: [
     {
       id: "1",
       title: "Sunset Summit Social",
@@ -33,7 +33,7 @@ const MEETUPS_DATA: Record<ModeType, MeetupData[]> = {
       location: "Joshua Tree, CA",
       image: require("@/assets/images/meetup1.png"),
       attendees: 24,
-      badge: "Roamantic",
+      badge: "Co-Pilot",
     },
     {
       id: "2",
@@ -42,7 +42,7 @@ const MEETUPS_DATA: Record<ModeType, MeetupData[]> = {
       location: "Sedona, AZ",
       image: require("@/assets/images/meetup2.png"),
       attendees: 18,
-      badge: "Roamantic",
+      badge: "Co-Pilot",
     },
     {
       id: "3",
@@ -51,10 +51,10 @@ const MEETUPS_DATA: Record<ModeType, MeetupData[]> = {
       location: "Big Sur, CA",
       image: require("@/assets/images/meetup3.png"),
       attendees: 32,
-      badge: "Roamantic",
+      badge: "Co-Pilot",
     },
   ],
-  routemate: [
+  convoy: [
     {
       id: "4",
       title: "Mountain Pass Convoy",
@@ -62,7 +62,7 @@ const MEETUPS_DATA: Record<ModeType, MeetupData[]> = {
       location: "Moab, UT",
       image: require("@/assets/images/meetup3.png"),
       attendees: 45,
-      badge: "RouteMate",
+      badge: "Convoy",
     },
     {
       id: "5",
@@ -71,7 +71,7 @@ const MEETUPS_DATA: Record<ModeType, MeetupData[]> = {
       location: "Death Valley, CA",
       image: require("@/assets/images/meetup1.png"),
       attendees: 28,
-      badge: "RouteMate",
+      badge: "Convoy",
     },
     {
       id: "6",
@@ -80,10 +80,10 @@ const MEETUPS_DATA: Record<ModeType, MeetupData[]> = {
       location: "Olympic NP, WA",
       image: require("@/assets/images/meetup2.png"),
       attendees: 36,
-      badge: "RouteMate",
+      badge: "Convoy",
     },
   ],
-  builders: [
+  support: [
     {
       id: "7",
       title: "Van Build Workshop",
@@ -91,7 +91,7 @@ const MEETUPS_DATA: Record<ModeType, MeetupData[]> = {
       location: "Portland, OR",
       image: require("@/assets/images/meetup2.png"),
       attendees: 20,
-      badge: "Builders",
+      badge: "Support",
     },
     {
       id: "8",
@@ -100,7 +100,7 @@ const MEETUPS_DATA: Record<ModeType, MeetupData[]> = {
       location: "Bend, OR",
       image: require("@/assets/images/meetup1.png"),
       attendees: 15,
-      badge: "Builders",
+      badge: "Support",
     },
     {
       id: "9",
@@ -109,7 +109,7 @@ const MEETUPS_DATA: Record<ModeType, MeetupData[]> = {
       location: "Flagstaff, AZ",
       image: require("@/assets/images/meetup3.png"),
       attendees: 22,
-      badge: "Builders",
+      badge: "Support",
     },
   ],
 };

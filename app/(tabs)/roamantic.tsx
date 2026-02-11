@@ -14,6 +14,7 @@ import { useRouter } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useImageGeneration } from "@fastshot/ai";
 import { LinearGradient } from "expo-linear-gradient";
+import GlobalHeader from "@/components/GlobalHeader";
 
 const { width } = Dimensions.get("window");
 
@@ -143,38 +144,20 @@ export default function RomanticScreen() {
   if (isGenerating) {
     return (
       <View style={[styles.container, styles.loadingContainer]}>
-        <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
-          <TouchableOpacity
-            onPress={() => router.back()}
-            style={styles.backButton}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="arrow-back" size={24} color="#D9C5B2" />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Roamantic</Text>
-          <View style={{ width: 40 }} />
+        <GlobalHeader />
+        <View style={styles.loadingContent}>
+          <ActivityIndicator size="large" color="#FF7043" />
+          <Text style={styles.loadingText}>
+            Generating nomad profiles...{"\n"}This may take 20-30 seconds
+          </Text>
         </View>
-        <ActivityIndicator size="large" color="#FF7043" />
-        <Text style={styles.loadingText}>
-          Generating nomad profiles...{"\n"}This may take 20-30 seconds
-        </Text>
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-          activeOpacity={0.7}
-        >
-          <Ionicons name="arrow-back" size={24} color="#D9C5B2" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Roamantic</Text>
-        <View style={{ width: 40 }} />
-      </View>
+      <GlobalHeader />
 
       <ScrollView
         style={styles.scrollView}
@@ -266,6 +249,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#1B2B21",
   },
   loadingContainer: {
+    flex: 1,
+  },
+  loadingContent: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -275,27 +262,6 @@ const styles = StyleSheet.create({
     color: "#D9C5B2",
     textAlign: "center",
     lineHeight: 24,
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-    paddingBottom: 12,
-    backgroundColor: "#1B2B21",
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: "800",
-    color: "#D9C5B2",
-    letterSpacing: 1,
   },
   scrollView: {
     flex: 1,

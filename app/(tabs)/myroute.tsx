@@ -15,6 +15,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
 import { useWayfolkPro } from "../../hooks/useWayfolkPro";
 import { LinearGradient } from "expo-linear-gradient";
+import GlobalHeader from "@/components/GlobalHeader";
 
 type TrustIndicator = {
   id: string;
@@ -103,11 +104,8 @@ export default function MyRouteScreen() {
   };
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>My Route</Text>
-      </View>
+    <View style={styles.container}>
+      <GlobalHeader />
 
       <ScrollView
         style={styles.scrollView}
@@ -311,16 +309,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#1B2B21",
-  },
-  header: {
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-  },
-  headerTitle: {
-    fontSize: 28,
-    fontWeight: "800",
-    color: "#D9C5B2",
-    letterSpacing: 0.5,
   },
   scrollView: {
     flex: 1,
