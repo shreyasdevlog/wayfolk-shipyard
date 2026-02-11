@@ -40,9 +40,9 @@ export default function ProfileScreen() {
   const [emergencyContact, setEmergencyContact] = useState("+1 (555) 123-4567");
 
   const vagabondStats: VagabondStat[] = [
-    { icon: "shield-checkmark", value: 42, label: "Vouches Received" },
-    { icon: "trail-sign", value: 12847, label: "Miles Traveled" },
-    { icon: "people", value: 18, label: "Convoys Joined" },
+    { icon: "shield-checkmark", value: 42, label: "Vouches" },
+    { icon: "trail-sign", value: 12847, label: "Miles" },
+    { icon: "people", value: 18, label: "Convoys" },
   ];
 
   const activityHistory: ActivityItem[] = [
@@ -148,6 +148,22 @@ export default function ProfileScreen() {
           </View>
         </View>
 
+        {/* Vagabond Stats Grid */}
+        <View style={styles.statsSection}>
+          <Text style={styles.sectionTitle}>Vagabond Stats</Text>
+          <View style={styles.statsGrid}>
+            {vagabondStats.map((stat, index) => (
+              <View key={index} style={styles.statCard}>
+                <View style={styles.statIconContainer}>
+                  <Ionicons name={stat.icon} size={28} color="#FF7043" />
+                </View>
+                <Text style={styles.statValue}>{stat.value.toLocaleString()}</Text>
+                <Text style={styles.statLabel}>{stat.label}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+
         {/* Subscription Status Card */}
         {isProMember ? (
           <View style={styles.subscriptionCard}>
@@ -197,22 +213,6 @@ export default function ProfileScreen() {
             </LinearGradient>
           </TouchableOpacity>
         )}
-
-        {/* Vagabond Stats Grid */}
-        <View style={styles.statsSection}>
-          <Text style={styles.sectionTitle}>Vagabond Stats</Text>
-          <View style={styles.statsGrid}>
-            {vagabondStats.map((stat, index) => (
-              <View key={index} style={styles.statCard}>
-                <View style={styles.statIconContainer}>
-                  <Ionicons name={stat.icon} size={28} color="#FF7043" />
-                </View>
-                <Text style={styles.statValue}>{stat.value.toLocaleString()}</Text>
-                <Text style={styles.statLabel}>{stat.label}</Text>
-              </View>
-            ))}
-          </View>
-        </View>
 
         {/* Activity History */}
         <View style={styles.activitySection}>

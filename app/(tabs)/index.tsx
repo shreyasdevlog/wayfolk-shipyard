@@ -7,7 +7,7 @@ import FeaturedMeetups from "@/components/FeaturedMeetups";
 import NearbyNomads from "@/components/NearbyNomads";
 
 export default function ExploreScreen() {
-  const [activeMode, setActiveMode] = useState<ModeType>("copilot");
+  const [activeMode, setActiveMode] = useState<ModeType>("convoy");
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = useCallback(() => {

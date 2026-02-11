@@ -130,10 +130,10 @@ export default function TabLayout() {
       <Tabs.Screen
         name="myroute"
         options={{
-          title: "Convoy",
+          title: "My Route",
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
-              name={focused ? "people" : "people-outline"}
+              name={focused ? "map" : "map-outline"}
               color={color}
               focused={focused}
             />

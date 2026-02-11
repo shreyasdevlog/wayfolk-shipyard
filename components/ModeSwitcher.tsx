@@ -7,7 +7,6 @@ import {
   Animated,
   type LayoutChangeEvent,
 } from "react-native";
-import { useRouter } from "expo-router";
 
 export type ModeType = "copilot" | "convoy" | "support";
 
@@ -17,9 +16,9 @@ interface ModeSwitcherProps {
 }
 
 const MODES: { key: ModeType; label: string; subtitle: string }[] = [
-  { key: "copilot", label: "Co-Pilot", subtitle: "Dating & Connections" },
-  { key: "convoy", label: "Convoy", subtitle: "Friends & Group Travel" },
-  { key: "support", label: "Support", subtitle: "Field Repair & Marketplace" },
+  { key: "copilot", label: "Co-Pilot", subtitle: "Dating" },
+  { key: "convoy", label: "Convoy", subtitle: "Friends" },
+  { key: "support", label: "Support", subtitle: "Field Repair" },
 ];
 
 const PADDING = 4;
@@ -28,7 +27,6 @@ export default function ModeSwitcher({
   activeMode,
   onModeChange,
 }: ModeSwitcherProps) {
-  const router = useRouter();
   const slideAnim = useRef(new Animated.Value(0)).current;
   const [indicatorWidth, setIndicatorWidth] = useState(0);
 
@@ -74,15 +72,7 @@ export default function ModeSwitcher({
               style={styles.tab}
               activeOpacity={0.7}
               onPress={() => {
-                if (mode.key === "copilot") {
-                  router.push("/(tabs)/roamantic");
-                } else if (mode.key === "convoy") {
-                  router.push("/(tabs)/myroute");
-                } else if (mode.key === "support") {
-                  router.push("/(tabs)/builders");
-                } else {
-                  onModeChange(mode.key);
-                }
+                onModeChange(mode.key);
               }}
             >
               <Text

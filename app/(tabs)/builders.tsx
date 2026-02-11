@@ -15,7 +15,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useImageGeneration } from "@fastshot/ai";
 import { useRouter } from "expo-router";
-import ModeSwitcher from "@/components/ModeSwitcher";
 import GlobalHeader from "@/components/GlobalHeader";
 
 interface Builder {
@@ -219,6 +218,7 @@ export default function BuildersScreen() {
 
   return (
     <View style={styles.container}>
+      <GlobalHeader />
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
@@ -227,10 +227,6 @@ export default function BuildersScreen() {
           { paddingBottom: insets.bottom + 90 },
         ]}
       >
-        <View style={styles.headerSection}>
-          <GlobalHeader includeSafeArea={false} />
-          <ModeSwitcher activeMode="support" onModeChange={() => {}} />
-        </View>
 
         <View style={styles.heroSection}>
           <Text style={styles.heroTitle}>Expert Help Nearby</Text>
@@ -469,14 +465,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 20,
-  },
-  headerSection: {
-    backgroundColor: "#1B2B21",
-  },
-  heroSection: {
     paddingHorizontal: 20,
     paddingTop: 8,
+    paddingBottom: 20,
+  },
+  heroSection: {
+    paddingTop: 0,
     paddingBottom: 20,
   },
   heroTitle: {
@@ -492,7 +486,6 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   searchSection: {
-    paddingHorizontal: 20,
     paddingBottom: 16,
   },
   searchBar: {
@@ -514,7 +507,6 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   sosSection: {
-    marginHorizontal: 20,
     marginBottom: 16,
     backgroundColor: "#2A3B31",
     borderRadius: 16,
@@ -548,7 +540,6 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   sosNotice: {
-    marginHorizontal: 20,
     marginBottom: 16,
     backgroundColor: "rgba(255, 68, 68, 0.15)",
     borderRadius: 12,
@@ -562,7 +553,6 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   buildersSection: {
-    paddingHorizontal: 20,
     paddingTop: 8,
   },
   sectionTitle: {
@@ -723,7 +713,6 @@ const styles = StyleSheet.create({
   },
   footerSection: {
     marginTop: 24,
-    marginHorizontal: 20,
     backgroundColor: "#253A2E",
     borderRadius: 16,
     padding: 20,
