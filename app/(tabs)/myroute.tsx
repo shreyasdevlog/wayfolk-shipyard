@@ -6,9 +6,15 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
+  Alert,
+  Linking,
+  Platform,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useRouter } from "expo-router";
+import { useWayfolkPro } from "../../hooks/useWayfolkPro";
+import { LinearGradient } from "expo-linear-gradient";
 
 type TrustIndicator = {
   id: string;
@@ -19,6 +25,8 @@ type TrustIndicator = {
 
 export default function MyRouteScreen() {
   const insets = useSafeAreaInsets();
+  const router = useRouter();
+  const { isProMember } = useWayfolkPro();
   const [currentBase, setCurrentBase] = useState("Lisbon, Portugal");
   const [nextDestination, setNextDestination] = useState("Barcelona, Spain");
 
@@ -65,6 +73,35 @@ export default function MyRouteScreen() {
     }
   };
 
+  const handleManageSubscription = () => {
+    const isIOS = Platform.OS === 'ios';
+    const title = 'Manage Your Subscription';
+    const message = isIOS
+      ? 'You can manage your subscription in the App Store. Would you like to open it now?'
+      : 'You can manage your subscription in the Play Store. Would you like to open it now?';
+
+    Alert.alert(title, message, [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Open Settings',
+        onPress: async () => {
+          try {
+            const url = isIOS
+              ? 'https://apps.apple.com/account/subscriptions'
+              : 'https://play.google.com/store/account/subscriptions';
+            await Linking.openURL(url);
+          } catch (error) {
+            console.error('Error opening subscription management:', error);
+          }
+        },
+      },
+    ]);
+  };
+
+  const handleUpgradeToPro = () => {
+    router.push('/paywall');
+  };
+
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       {/* Header */}
@@ -80,6 +117,67 @@ export default function MyRouteScreen() {
         ]}
         showsVerticalScrollIndicator={false}
       >
+        {/* Pro Membership Card */}
+        {isProMember ? (
+          <View style={styles.proCard}>
+            <LinearGradient
+              colors={['#FF7043', '#FF5722']}
+              style={styles.proCardGradient}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+            >
+              <View style={styles.proCardHeader}>
+                <View style={styles.proCardLeft}>
+                  <View style={styles.proBadge}>
+                    <Ionicons name="star" size={20} color="#FF7043" />
+                    <Text style={styles.proBadgeText}>PRO</Text>
+                  </View>
+                  <Text style={styles.proCardTitle}>Wayfolk Pro Member</Text>
+                  <Text style={styles.proCardSubtext}>
+                    Enjoying unlimited features
+                  </Text>
+                </View>
+                <Ionicons name="rocket" size={32} color="#FFFFFF" />
+              </View>
+
+              <TouchableOpacity
+                style={styles.manageButton}
+                onPress={handleManageSubscription}
+                activeOpacity={0.8}
+              >
+                <Ionicons name="settings-outline" size={18} color="#FF7043" />
+                <Text style={styles.manageButtonText}>Manage Subscription</Text>
+              </TouchableOpacity>
+            </LinearGradient>
+          </View>
+        ) : (
+          <TouchableOpacity
+            style={styles.upgradeCard}
+            onPress={handleUpgradeToPro}
+            activeOpacity={0.9}
+          >
+            <LinearGradient
+              colors={['#FF7043', '#FF5722']}
+              style={styles.upgradeCardGradient}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+            >
+              <View style={styles.upgradeCardContent}>
+                <View style={styles.upgradeIconContainer}>
+                  <Ionicons name="rocket" size={32} color="#FFFFFF" />
+                </View>
+                <View style={styles.upgradeTextContainer}>
+                  <Text style={styles.upgradeTitle}>Upgrade to Wayfolk Pro</Text>
+                  <Text style={styles.upgradeSubtext}>
+                    Unlock unlimited features and perks
+                  </Text>
+                </View>
+                <Ionicons name="arrow-forward" size={24} color="#FFFFFF" />
+              </View>
+            </LinearGradient>
+          </TouchableOpacity>
+        )}
+
         {/* Travel Status Card */}
         <View style={styles.travelCard}>
           <Text style={styles.cardTitle}>Travel Itinerary</Text>
@@ -230,6 +328,107 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: 20,
     paddingTop: 8,
+  },
+
+  // Pro Membership Card Styles
+  proCard: {
+    borderRadius: 16,
+    marginBottom: 16,
+    overflow: 'hidden',
+  },
+  proCardGradient: {
+    padding: 20,
+  },
+  proCardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  proCardLeft: {
+    flex: 1,
+  },
+  proBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
+    alignSelf: 'flex-start',
+    marginBottom: 12,
+    gap: 6,
+  },
+  proBadgeText: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#FF7043',
+    letterSpacing: 1,
+  },
+  proCardTitle: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: '#FFFFFF',
+    marginBottom: 4,
+    letterSpacing: 0.3,
+  },
+  proCardSubtext: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: 'rgba(255, 255, 255, 0.9)',
+  },
+  manageButton: {
+    backgroundColor: '#FFFFFF',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 14,
+    borderRadius: 12,
+    gap: 8,
+  },
+  manageButtonText: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#FF7043',
+    letterSpacing: 0.2,
+  },
+
+  // Upgrade Card Styles
+  upgradeCard: {
+    borderRadius: 16,
+    marginBottom: 16,
+    overflow: 'hidden',
+  },
+  upgradeCardGradient: {
+    padding: 20,
+  },
+  upgradeCardContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  upgradeIconContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 16,
+  },
+  upgradeTextContainer: {
+    flex: 1,
+  },
+  upgradeTitle: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: '#FFFFFF',
+    marginBottom: 4,
+    letterSpacing: 0.3,
+  },
+  upgradeSubtext: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: 'rgba(255, 255, 255, 0.9)',
   },
 
   // Travel Card Styles

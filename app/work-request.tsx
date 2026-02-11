@@ -7,11 +7,13 @@ import {
   ScrollView,
   TextInput,
   Image,
-  Platform,
+  Alert,
+  ActivityIndicator,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter, useLocalSearchParams } from "expo-router";
+import { useWayfolkPro } from "../hooks/useWayfolkPro";
 
 // Problem tag options
 const PROBLEM_TAGS = [
@@ -54,16 +56,19 @@ export default function WorkRequestScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const params = useLocalSearchParams();
+  const { isProMember, isLoading: isCheckingPro, purchaseBuilderConnection } = useWayfolkPro();
 
   // Extract builder info from params
   const builderName = (params.name as string) || "Builder";
   const builderImage = params.imageUrl as string;
   const hourlyRate = parseInt((params.hourlyRate as string) || "0", 10);
+  const builderId = params.id as string;
 
   // Form state
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [description, setDescription] = useState("");
   const [urgency, setUrgency] = useState<string>("medium");
+  const [isPurchasing, setIsPurchasing] = useState(false);
 
   const bookingFee = 9.99;
 
@@ -75,16 +80,70 @@ export default function WorkRequestScreen() {
     }
   };
 
-  const handleSubmit = () => {
-    // TODO: Implement payment flow with RevenueCat/Apple Pay/Google Pay
-    console.log({
-      builder: builderName,
-      tags: selectedTags,
-      description,
-      urgency,
-      bookingFee,
-      hourlyRate,
-    });
+  const handleSubmit = async () => {
+    // Check if user has Pro membership
+    if (isProMember) {
+      // Pro members get 1 free consultation per month
+      // Navigate directly to the chat thread
+      Alert.alert(
+        '✨ Pro Member Benefit',
+        'Your free monthly builder consultation has been activated!',
+        [
+          {
+            text: 'Start Chat',
+            onPress: () => {
+              // Navigate to chat with builder
+              router.push(`/chat/${builderId}`);
+            },
+          },
+        ]
+      );
+      return;
+    }
+
+    // Non-Pro members need to purchase Builder Connection
+    Alert.alert(
+      'Builder Connection Required',
+      `Connect with ${builderName} for a one-time fee of $${bookingFee.toFixed(2)}. This unlocks your conversation and shares your location with the builder.`,
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: `Pay $${bookingFee.toFixed(2)}`,
+          onPress: handleBuilderConnectionPurchase,
+        },
+      ]
+    );
+  };
+
+  const handleBuilderConnectionPurchase = async () => {
+    setIsPurchasing(true);
+
+    try {
+      const success = await purchaseBuilderConnection();
+
+      if (success) {
+        // Purchase successful - navigate to chat
+        Alert.alert(
+          'Connection Established! 🎉',
+          `You can now chat with ${builderName} and share your location.`,
+          [
+            {
+              text: 'Start Chat',
+              onPress: () => {
+                router.push(`/chat/${builderId}`);
+              },
+            },
+          ]
+        );
+      }
+    } catch (error) {
+      console.error('Purchase failed:', error);
+    } finally {
+      setIsPurchasing(false);
+    }
   };
 
   const isFormValid = selectedTags.length > 0 && description.trim().length > 20;
@@ -286,20 +345,26 @@ export default function WorkRequestScreen() {
         <TouchableOpacity
           style={[
             styles.ctaButton,
-            !isFormValid && styles.ctaButtonDisabled,
+            (!isFormValid || isPurchasing || isCheckingPro) && styles.ctaButtonDisabled,
           ]}
           onPress={handleSubmit}
-          disabled={!isFormValid}
+          disabled={!isFormValid || isPurchasing || isCheckingPro}
           activeOpacity={0.8}
         >
-          <Ionicons
-            name={Platform.OS === "ios" ? "logo-apple" : "logo-google"}
-            size={24}
-            color="#FFFFFF"
-          />
-          <Text style={styles.ctaButtonText}>
-            Confirm & Pay with {Platform.OS === "ios" ? "Apple" : "Google"} Pay
-          </Text>
+          {isPurchasing || isCheckingPro ? (
+            <ActivityIndicator size="small" color="#FFFFFF" />
+          ) : (
+            <>
+              <Ionicons
+                name={isProMember ? "checkmark-circle" : "card"}
+                size={24}
+                color="#FFFFFF"
+              />
+              <Text style={styles.ctaButtonText}>
+                {isProMember ? 'Confirm Request (Free)' : `Confirm & Pay $${bookingFee.toFixed(2)}`}
+              </Text>
+            </>
+          )}
         </TouchableOpacity>
         {!isFormValid && (
           <Text style={styles.ctaHint}>
