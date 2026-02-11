@@ -7,6 +7,7 @@ import {
   Animated,
   type LayoutChangeEvent,
 } from "react-native";
+import { useRouter } from "expo-router";
 
 export type ModeType = "roamantic" | "routemate" | "builders";
 
@@ -27,6 +28,7 @@ export default function ModeSwitcher({
   activeMode,
   onModeChange,
 }: ModeSwitcherProps) {
+  const router = useRouter();
   const slideAnim = useRef(new Animated.Value(0)).current;
   const [indicatorWidth, setIndicatorWidth] = useState(0);
 
@@ -71,7 +73,13 @@ export default function ModeSwitcher({
               key={mode.key}
               style={styles.tab}
               activeOpacity={0.7}
-              onPress={() => onModeChange(mode.key)}
+              onPress={() => {
+                if (mode.key === "roamantic") {
+                  router.push("/(tabs)/roamantic");
+                } else {
+                  onModeChange(mode.key);
+                }
+              }}
             >
               <Text
                 style={[

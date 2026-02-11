@@ -89,6 +89,19 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="roamantic"
+        options={{
+          title: "Roamantic",
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon
+              name={focused ? "heart" : "heart-outline"}
+              color={color}
+              focused={focused}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="messages"
         options={{
           title: "Messages",
