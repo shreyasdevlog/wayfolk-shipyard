@@ -1,0 +1,37 @@
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
+@import "tailwindcss/utilities.css";
+@import "nativewind/theme";
+
+@layer theme {
+  @theme {
+    --color-forest: #1B2B21;
+    --color-forest-light: #253A2E;
+    --color-forest-lighter: #2F4A3A;
+    --color-dusty: #D9C5B2;
+    --color-dusty-dark: #C4AC97;
+    --color-dusty-light: #E8DDD2;
+    --color-sunset: #FF7043;
+    --color-sunset-dark: #E5603A;
+    --color-sunset-light: #FF8A65;
+    --color-cream: #F5F0EB;
+
+    --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+}
+
+@media android {
+  :root {
+    --font-mono: monospace;
+    --font-serif: serif;
+    --font-sans: normal;
+  }
+}
+
+@media ios {
+  :root {
+    --font-mono: ui-monospace;
+    --font-serif: ui-serif;
+    --font-sans: system-ui;
+  }
+}
