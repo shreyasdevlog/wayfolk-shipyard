@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useRouter } from "expo-router";
 import type { ModeType } from "./ModeSwitcher";
 
 interface NomadData {
@@ -123,6 +124,22 @@ const NOMADS_DATA: Record<ModeType, NomadData[]> = {
 };
 
 function NomadCard({ item }: { item: NomadData }) {
+  const router = useRouter();
+
+  const handlePress = () => {
+    router.push({
+      pathname: "/nomad-profile",
+      params: {
+        id: item.id,
+        name: item.name,
+        vanType: item.vanType,
+        vouches: item.vouches.toString(),
+        distance: item.distance,
+        status: item.status,
+      },
+    });
+  };
+
   return (
     <View style={styles.card}>
       <View style={styles.cardLeft}>
@@ -151,7 +168,11 @@ function NomadCard({ item }: { item: NomadData }) {
         </View>
       </View>
       <View style={styles.cardRight}>
-        <TouchableOpacity style={styles.viewProfileBtn} activeOpacity={0.7}>
+        <TouchableOpacity
+          style={styles.viewProfileBtn}
+          activeOpacity={0.7}
+          onPress={handlePress}
+        >
           <Text style={styles.viewProfileText}>View</Text>
           <Ionicons name="chevron-forward" size={14} color="#1B2B21" />
         </TouchableOpacity>
@@ -174,9 +195,6 @@ export default function NearbyNomads({ activeMode }: NearbyNomadsProps) {
     <View style={styles.container}>
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>Nearby Nomads</Text>
-        <TouchableOpacity activeOpacity={0.7}>
-          <Text style={styles.seeAll}>See All</Text>
-        </TouchableOpacity>
       </View>
       {nomads.map((nomad) => (
         <NomadCard key={nomad.id} item={nomad} />

@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Image } from "expo-image";
+import { useRouter } from "expo-router";
 import type { ModeType } from "./ModeSwitcher";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -115,8 +116,29 @@ const MEETUPS_DATA: Record<ModeType, MeetupData[]> = {
 };
 
 function MeetupCard({ item }: { item: MeetupData }) {
+  const router = useRouter();
+
+  const handlePress = () => {
+    router.push({
+      pathname: "/meetup-details",
+      params: {
+        id: item.id,
+        title: item.title,
+        date: item.date,
+        location: item.location,
+        image: item.image,
+        attendees: item.attendees.toString(),
+        badge: item.badge,
+      },
+    });
+  };
+
   return (
-    <TouchableOpacity style={styles.card} activeOpacity={0.85}>
+    <TouchableOpacity
+      style={styles.card}
+      activeOpacity={0.85}
+      onPress={handlePress}
+    >
       <Image
         source={item.image}
         style={styles.cardImage}
@@ -136,9 +158,7 @@ function MeetupCard({ item }: { item: MeetupData }) {
         <Text style={styles.cardDate}>{item.date}</Text>
         <View style={styles.cardFooter}>
           <Text style={styles.cardLocation}>{item.location}</Text>
-          <Text style={styles.cardAttendees}>
-            {item.attendees} going
-          </Text>
+          <Text style={styles.cardAttendees}>{item.attendees} going</Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -156,9 +176,6 @@ export default function FeaturedMeetups({ activeMode }: FeaturedMeetupsProps) {
     <View style={styles.container}>
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>Featured Meetups</Text>
-        <TouchableOpacity activeOpacity={0.7}>
-          <Text style={styles.seeAll}>See All</Text>
-        </TouchableOpacity>
       </View>
       <FlatList
         data={meetups}

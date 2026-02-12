@@ -89,19 +89,6 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="roamantic"
-        options={{
-          title: "Co-Pilot",
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={focused ? "heart" : "heart-outline"}
-              color={color}
-              focused={focused}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
         name="messages"
         options={{
           title: "Messages",
@@ -115,12 +102,12 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="builders"
+        name="myroute"
         options={{
-          title: "Support",
+          title: "My Route",
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
-              name={focused ? "construct" : "construct-outline"}
+              name={focused ? "map" : "map-outline"}
               color={color}
               focused={focused}
             />
@@ -128,12 +115,12 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="myroute"
+        name="profile"
         options={{
-          title: "My Route",
+          title: "Profile",
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
-              name={focused ? "map" : "map-outline"}
+              name={focused ? "person" : "person-outline"}
               color={color}
               focused={focused}
             />

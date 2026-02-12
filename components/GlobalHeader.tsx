@@ -17,10 +17,6 @@ export default function GlobalHeader({
   const insets = useSafeAreaInsets();
   const router = useRouter();
 
-  const handleProfilePress = () => {
-    router.push("/profile");
-  };
-
   return (
     <View
       style={[
@@ -30,13 +26,6 @@ export default function GlobalHeader({
     >
       <View style={styles.inner}>
         <Text style={styles.brandName}>Wayfolk</Text>
-        <TouchableOpacity
-          style={styles.profileButton}
-          activeOpacity={0.7}
-          onPress={handleProfilePress}
-        >
-          <Ionicons name="person" size={20} color="#1B2B21" />
-        </TouchableOpacity>
       </View>
     </View>
   );

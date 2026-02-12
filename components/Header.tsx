@@ -15,9 +15,6 @@ export default function Header() {
     <View style={[styles.container, { paddingTop: insets.top + 8 }]}>
       <View style={styles.inner}>
         <Text style={styles.brandName}>Wayfolk</Text>
-        <TouchableOpacity style={styles.profileButton} activeOpacity={0.7}>
-          <Ionicons name="person" size={20} color="#1B2B21" />
-        </TouchableOpacity>
       </View>
     </View>
   );
