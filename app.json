@@ -16,7 +16,8 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.shreyas.vagabond"
     },
     "web": {
       "bundler": "metro",
@@ -38,6 +39,13 @@
     "experiments": {
       "typedRoutes": true,
       "baseUrl": ""
+    },
+    "owner": "shreyas3455",
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "73347a75-d0ea-49ea-a78b-3fb53d695e62"
+      }
     }
   }
 }
