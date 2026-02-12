@@ -9,7 +9,12 @@ import {
   Alert,
   Linking,
   Platform,
+  Animated,
+  Modal,
+  Share,
+  Clipboard,
 } from "react-native";
+import { useEffect, useRef } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useRouter } from "expo-router";
@@ -28,29 +33,107 @@ export default function MyRouteScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { isProMember } = useWayfolkPro();
-  const [currentBase, setCurrentBase] = useState("Lisbon, Portugal");
-  const [nextDestination, setNextDestination] = useState("Barcelona, Spain");
 
-  const trustIndicators: TrustIndicator[] = [
+  // Journey States
+  const [origin, setOrigin] = useState("San Diego, CA");
+  const [currentBase, setCurrentBase] = useState("Big Sur, CA");
+  const [nextDestination, setNextDestination] = useState("Portland, OR");
+
+  const [displayOrigin, setDisplayOrigin] = useState("San Diego, CA");
+  const [displayCurrent, setDisplayCurrent] = useState("Big Sur, CA");
+  const [displayDestination, setDisplayDestination] = useState("Portland, OR");
+
+  // Animation Refs
+  const busPulse = useRef(new Animated.Value(1)).current;
+
+  // Invite States
+  const [inviteModalVisible, setInviteModalVisible] = useState(false);
+  const INVITE_CODE = "wf-3724703";
+
+  // Trust Indicators States
+  const [indicators, setIndicators] = useState<TrustIndicator[]>([
     {
       id: "instagram",
       icon: "logo-instagram",
-      label: "Link Instagram",
-      status: "verified",
+      label: "Instagram",
+      status: "unverified",
     },
     {
       id: "tiktok",
       icon: "logo-tiktok",
-      label: "Link TikTok",
-      status: "pending",
+      label: "TikTok",
+      status: "unverified",
     },
     {
       id: "phone",
       icon: "call",
-      label: "Phone Verification",
-      status: "verified",
+      label: "Phone",
+      status: "unverified",
     },
-  ];
+  ]);
+  const [linkingIndicator, setLinkingIndicator] = useState<string | null>(null);
+  const [handleInput, setHandleInput] = useState("");
+
+  const handleUpdatePath = () => {
+    // Update display labels
+    setDisplayOrigin(origin);
+    setDisplayCurrent(currentBase);
+    setDisplayDestination(nextDestination);
+
+    // Trigger Pulse Animation
+    Animated.sequence([
+      Animated.timing(busPulse, {
+        toValue: 1.4,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.spring(busPulse, {
+        toValue: 1,
+        friction: 4,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  };
+
+  const handleInviteShare = async () => {
+    try {
+      await Share.share({
+        message: `Join me on the road! Here is your exclusive invite to Wayfolk: ${INVITE_CODE}`,
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const copyToClipboard = () => {
+    Clipboard.setString(INVITE_CODE);
+    Alert.alert("Copied", "Invite code copied to clipboard!");
+  };
+
+  const submitLink = () => {
+    if (!linkingIndicator) return;
+
+    setIndicators((prev) =>
+      prev.map((ind) =>
+        ind.id === linkingIndicator ? { ...ind, status: "pending" } : ind
+      )
+    );
+
+    const indicatorId = linkingIndicator;
+    setLinkingIndicator(null);
+    setHandleInput("");
+
+    // Timed Verification for Instagram
+    if (indicatorId === "instagram") {
+      setTimeout(() => {
+        setIndicators((prev) =>
+          prev.map((ind) =>
+            ind.id === "instagram" ? { ...ind, status: "verified" } : ind
+          )
+        );
+      }, 5000);
+    }
+  };
 
   const getStatusColor = (status: TrustIndicator["status"]) => {
     switch (status) {
@@ -115,6 +198,35 @@ export default function MyRouteScreen() {
         ]}
         showsVerticalScrollIndicator={false}
       >
+        {/* Journey Progress Graphic */}
+        <View style={styles.journeyGraphicContainer}>
+          <View style={styles.dottedRoadContainer}>
+            <View style={styles.dottedRoad} />
+            <Animated.View
+              style={[
+                styles.busIconContainer,
+                { transform: [{ scale: busPulse }] },
+              ]}
+            >
+              <Ionicons name="bus" size={24} color="#FF7043" />
+            </Animated.View>
+          </View>
+          <View style={styles.journeyLabels}>
+            <View style={styles.journeyLabelItem}>
+              <Text style={styles.journeyLabel}>Starting Point</Text>
+              <Text style={styles.journeyValue}>{displayOrigin}</Text>
+            </View>
+            <View style={styles.journeyLabelItem}>
+              <Text style={styles.journeyLabel}>Currently At</Text>
+              <Text style={styles.journeyValue}>{displayCurrent}</Text>
+            </View>
+            <View style={styles.journeyLabelItem}>
+              <Text style={styles.journeyLabel}>Next Stop</Text>
+              <Text style={styles.journeyValue}>{displayDestination}</Text>
+            </View>
+          </View>
+        </View>
+
         {/* Pro Membership Card */}
         {isProMember ? (
           <View style={styles.proCard}>
@@ -180,6 +292,21 @@ export default function MyRouteScreen() {
         <View style={styles.travelCard}>
           <Text style={styles.cardTitle}>Travel Itinerary</Text>
 
+          {/* Origin */}
+          <View style={styles.locationContainer}>
+            <View style={styles.locationHeader}>
+              <Ionicons name="home" size={20} color="#1B2B21" />
+              <Text style={styles.locationLabel}>Origin</Text>
+            </View>
+            <TextInput
+              style={styles.input}
+              value={origin}
+              onChangeText={setOrigin}
+              placeholder="Joshua Tree, CA"
+              placeholderTextColor="rgba(27, 43, 33, 0.4)"
+            />
+          </View>
+
           {/* Current Base */}
           <View style={styles.locationContainer}>
             <View style={styles.locationHeader}>
@@ -190,36 +317,32 @@ export default function MyRouteScreen() {
               style={styles.input}
               value={currentBase}
               onChangeText={setCurrentBase}
-              placeholder="Enter your current location"
+              placeholder="Moab, UT"
               placeholderTextColor="rgba(27, 43, 33, 0.4)"
             />
-          </View>
-
-          {/* Connecting Line */}
-          <View style={styles.connectionContainer}>
-            <View style={styles.dottedLine} />
-            <View style={styles.arrowContainer}>
-              <Ionicons name="airplane" size={20} color="#FF7043" />
-            </View>
           </View>
 
           {/* Next Destination */}
           <View style={styles.locationContainer}>
             <View style={styles.locationHeader}>
               <Ionicons name="flag" size={20} color="#1B2B21" />
-              <Text style={styles.locationLabel}>Next Destination</Text>
+              <Text style={styles.locationLabel}>Destination</Text>
             </View>
             <TextInput
               style={styles.input}
               value={nextDestination}
               onChangeText={setNextDestination}
-              placeholder="Where are you headed?"
+              placeholder="Olympic NP, WA"
               placeholderTextColor="rgba(27, 43, 33, 0.4)"
             />
           </View>
 
           {/* Update Path Button */}
-          <TouchableOpacity style={styles.updateButton} activeOpacity={0.8}>
+          <TouchableOpacity
+            style={styles.updateButton}
+            activeOpacity={0.8}
+            onPress={handleUpdatePath}
+          >
             <Text style={styles.updateButtonText}>Update Path</Text>
             <Ionicons name="arrow-forward" size={18} color="#FFFFFF" />
           </TouchableOpacity>
@@ -245,36 +368,41 @@ export default function MyRouteScreen() {
           {/* Trust Indicators */}
           <View style={styles.indicatorsContainer}>
             <Text style={styles.indicatorsTitle}>Trust Indicators</Text>
-            {trustIndicators.map((indicator) => (
+            {indicators.map((indicator) => (
               <View key={indicator.id} style={styles.indicatorRow}>
                 <View style={styles.indicatorLeft}>
                   <View style={styles.indicatorIconContainer}>
-                    <Ionicons
-                      name={indicator.icon}
-                      size={20}
-                      color="#1B2B21"
-                    />
+                    <Ionicons name={indicator.icon} size={20} color="#1B2B21" />
                   </View>
                   <Text style={styles.indicatorLabel}>{indicator.label}</Text>
                 </View>
-                <View
-                  style={[
-                    styles.statusPill,
-                    { backgroundColor: getStatusColor(indicator.status) },
-                  ]}
-                >
-                  <Text style={styles.statusText}>
-                    {getStatusLabel(indicator.status)}
-                  </Text>
-                  {indicator.status === "verified" && (
-                    <Ionicons
-                      name="checkmark-circle"
-                      size={14}
-                      color="#FFFFFF"
-                      style={styles.statusIcon}
-                    />
-                  )}
-                </View>
+
+                {indicator.status === "unverified" ? (
+                  <TouchableOpacity
+                    onPress={() => setLinkingIndicator(indicator.id)}
+                  >
+                    <Text style={styles.linkButtonText}>Link</Text>
+                  </TouchableOpacity>
+                ) : (
+                  <View
+                    style={[
+                      styles.statusPill,
+                      { backgroundColor: getStatusColor(indicator.status) },
+                    ]}
+                  >
+                    <Text style={styles.statusText}>
+                      {getStatusLabel(indicator.status)}
+                    </Text>
+                    {indicator.status === "verified" && (
+                      <Ionicons
+                        name="checkmark-circle"
+                        size={14}
+                        color="#FFFFFF"
+                        style={styles.statusIcon}
+                      />
+                    )}
+                  </View>
+                )}
               </View>
             ))}
           </View>
@@ -295,12 +423,92 @@ export default function MyRouteScreen() {
           <TouchableOpacity
             style={styles.inviteButton}
             activeOpacity={0.8}
+            onPress={() => setInviteModalVisible(true)}
           >
             <Ionicons name="link" size={18} color="#FFFFFF" />
             <Text style={styles.inviteButtonText}>Generate Invite Link</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
+
+      {/* Invite Modal */}
+      <Modal
+        visible={inviteModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setInviteModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <TouchableOpacity
+              style={styles.closeModal}
+              onPress={() => setInviteModalVisible(false)}
+            >
+              <Ionicons name="close" size={24} color="#D9C5B2" />
+            </TouchableOpacity>
+
+            <Text style={styles.modalTitle}>Expand the Circle</Text>
+            <Text style={styles.modalBody}>
+              Thank you for helping us grow Wayfolk intentionally. Your
+              community trust allows you to invite fellow travelers.
+            </Text>
+
+            <View style={styles.codeContainer}>
+              <Text style={styles.inviteCode}>{INVITE_CODE}</Text>
+              <TouchableOpacity onPress={copyToClipboard}>
+                <Ionicons name="copy-outline" size={20} color="#FF7043" />
+              </TouchableOpacity>
+            </View>
+
+            <TouchableOpacity
+              style={styles.shareButton}
+              onPress={handleInviteShare}
+            >
+              <Ionicons name="share-social" size={18} color="#FFFFFF" />
+              <Text style={styles.shareButtonText}>Share</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Link Indicator Modal */}
+      <Modal
+        visible={!!linkingIndicator}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setLinkingIndicator(null)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <TouchableOpacity
+              style={styles.closeModal}
+              onPress={() => setLinkingIndicator(null)}
+            >
+              <Ionicons name="close" size={24} color="#D9C5B2" />
+            </TouchableOpacity>
+
+            <Text style={styles.modalTitle}>
+              Link {indicators.find((i) => i.id === linkingIndicator)?.label}
+            </Text>
+            <TextInput
+              style={styles.modalInput}
+              placeholder={
+                linkingIndicator === "phone"
+                  ? "Enter Phone Number"
+                  : "Enter @handle"
+              }
+              placeholderTextColor="rgba(217, 197, 178, 0.4)"
+              value={handleInput}
+              onChangeText={setHandleInput}
+              autoFocus
+            />
+
+            <TouchableOpacity style={styles.submitButton} onPress={submitLink}>
+              <Text style={styles.submitButtonText}>Submit</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -430,10 +638,56 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "700",
     color: "#1B2B21",
-    marginBottom: 16,
+    marginBottom: 20,
+  },
+  journeyGraphicContainer: {
+    paddingVertical: 24,
+    marginBottom: 8,
+  },
+  dottedRoadContainer: {
+    height: 30,
+    justifyContent: 'center',
+    position: 'relative',
+    marginBottom: 12,
+  },
+  dottedRoad: {
+    height: 2,
+    borderBottomWidth: 2,
+    borderBottomColor: '#D9C5B2',
+    borderStyle: 'dashed',
+    opacity: 0.3,
+  },
+  busIconContainer: {
+    position: 'absolute',
+    left: '50%',
+    marginLeft: -12,
+    top: -10,
+  },
+  journeyLabels: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 4,
+  },
+  journeyLabelItem: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  journeyLabel: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#D9C5B2',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginBottom: 4,
+  },
+  journeyValue: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#D9C5B2',
+    opacity: 0.8,
   },
   locationContainer: {
-    marginBottom: 12,
+    marginBottom: 16,
   },
   locationHeader: {
     flexDirection: "row",
@@ -626,5 +880,97 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#FFFFFF",
     marginLeft: 8,
+  },
+
+  // Interactive Styles
+  linkButtonText: {
+    color: "#FF7043",
+    fontWeight: "700",
+    fontSize: 14,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 24,
+  },
+  modalContent: {
+    backgroundColor: "#1B2B21",
+    borderRadius: 16,
+    padding: 24,
+    width: "100%",
+    maxWidth: 400,
+    borderWidth: 1,
+    borderColor: "rgba(217, 197, 178, 0.1)",
+  },
+  closeModal: {
+    position: "absolute",
+    right: 16,
+    top: 16,
+  },
+  modalTitle: {
+    fontSize: 22,
+    fontWeight: "800",
+    color: "#D9C5B2",
+    marginBottom: 12,
+    textAlign: "center",
+  },
+  modalBody: {
+    fontSize: 15,
+    color: "rgba(217, 197, 178, 0.8)",
+    textAlign: "center",
+    lineHeight: 22,
+    marginBottom: 24,
+  },
+  codeContainer: {
+    backgroundColor: "rgba(255, 112, 67, 0.1)",
+    borderRadius: 12,
+    padding: 16,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  inviteCode: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#FF7043",
+    fontFamily: Platform.OS === "ios" ? "Courier" : "monospace",
+  },
+  shareButton: {
+    backgroundColor: "#FF7043",
+    borderRadius: 12,
+    paddingVertical: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+  },
+  shareButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "700",
+  },
+  modalInput: {
+    backgroundColor: "rgba(217, 197, 178, 0.05)",
+    borderRadius: 12,
+    padding: 16,
+    color: "#D9C5B2",
+    fontSize: 16,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: "rgba(217, 197, 178, 0.2)",
+  },
+  submitButton: {
+    backgroundColor: "#FF7043",
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: "center",
+  },
+  submitButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "700",
   },
 });
