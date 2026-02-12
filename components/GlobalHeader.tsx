@@ -21,7 +21,7 @@ export default function GlobalHeader({
     <View
       style={[
         styles.container,
-        includeSafeArea && { paddingTop: insets.top + 12 },
+        includeSafeArea && { paddingTop: insets.top },
       ]}
     >
       <View style={styles.inner}>
@@ -35,26 +35,18 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "#1B2B21",
     paddingHorizontal: 20,
-    paddingBottom: 12,
   },
   inner: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    height: 40,
+    justifyContent: "center",
+    height: 60,
   },
   brandName: {
     fontSize: 28,
     fontWeight: "800",
     color: "#D9C5B2",
     letterSpacing: 1.5,
-  },
-  profileButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "#D9C5B2",
-    alignItems: "center",
-    justifyContent: "center",
+    fontStyle: "italic",
   },
 });

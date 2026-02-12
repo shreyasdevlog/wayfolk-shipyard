@@ -15,8 +15,9 @@ import { useRouter } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useWayfolkPro } from "../../hooks/useWayfolkPro";
+import GlobalHeader from "@/components/GlobalHeader";
 
-interface VagabondStat {
+interface WayfolkStat {
     icon: React.ComponentProps<typeof Ionicons>["name"];
     value: number;
     label: string;
@@ -39,7 +40,7 @@ export default function ProfileScreen() {
     const [locationPrivacy, setLocationPrivacy] = useState(false);
     const [emergencyContact, setEmergencyContact] = useState("+1 (555) 123-4567");
 
-    const vagabondStats: VagabondStat[] = [
+    const wayfolkStats: WayfolkStat[] = [
         { icon: "shield-checkmark", value: 42, label: "Vouches" },
         { icon: "trail-sign", value: 12847, label: "Miles" },
         { icon: "people", value: 18, label: "Convoys" },
@@ -105,18 +106,7 @@ export default function ProfileScreen() {
 
     return (
         <View style={[styles.container, { paddingTop: insets.top }]}>
-            {/* Header */}
-            <View style={styles.header}>
-                <TouchableOpacity
-                    onPress={() => router.back()}
-                    style={styles.backButton}
-                    activeOpacity={0.7}
-                >
-                    <Ionicons name="close" size={28} color="#D9C5B2" />
-                </TouchableOpacity>
-                <Text style={styles.headerTitle}>Profile</Text>
-                <View style={{ width: 40 }} />
-            </View>
+            <GlobalHeader includeSafeArea={false} />
 
             <ScrollView
                 style={styles.scrollView}
@@ -144,15 +134,15 @@ export default function ProfileScreen() {
                     <Text style={styles.memberSince}>Member since June 2024</Text>
                     <View style={styles.verifiedPill}>
                         <Ionicons name="shield-checkmark" size={16} color="#4CAF50" />
-                        <Text style={styles.verifiedText}>Verified Vagabond</Text>
+                        <Text style={styles.verifiedText}>Verified Wayfolk</Text>
                     </View>
                 </View>
 
-                {/* Vagabond Stats Grid */}
+                {/* Wayfolk Stats Grid */}
                 <View style={styles.statsSection}>
-                    <Text style={styles.sectionTitle}>Vagabond Stats</Text>
+                    <Text style={styles.sectionTitle}>Wayfolk Stats</Text>
                     <View style={styles.statsGrid}>
-                        {vagabondStats.map((stat, index) => (
+                        {wayfolkStats.map((stat, index) => (
                             <View key={index} style={styles.statCard}>
                                 <View style={styles.statIconContainer}>
                                     <Ionicons name={stat.icon} size={28} color="#FF7043" />
@@ -500,7 +490,7 @@ const styles = StyleSheet.create({
         letterSpacing: 0.3,
     },
 
-    // Vagabond Stats
+    // Wayfolk Stats
     statsSection: {
         marginBottom: 24,
     },

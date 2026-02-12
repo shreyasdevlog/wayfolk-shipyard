@@ -12,6 +12,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as Haptics from 'expo-haptics';
 import { RigIcon, RigType } from '@/components/chat/RigIcon';
+import GlobalHeader from '@/components/GlobalHeader';
 
 interface Conversation {
   id: string;
@@ -119,12 +120,7 @@ export default function MessagesScreen() {
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Messages</Text>
-        <TouchableOpacity style={styles.newMessageButton} activeOpacity={0.7}>
-          <Ionicons name="create-outline" size={24} color="#FF7043" />
-        </TouchableOpacity>
-      </View>
+      <GlobalHeader includeSafeArea={false} />
 
       <FlatList
         data={MOCK_CONVERSATIONS}

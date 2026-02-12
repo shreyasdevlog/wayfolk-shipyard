@@ -187,8 +187,8 @@ export default function MyRouteScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <GlobalHeader />
+    <View style={[styles.container, { paddingTop: insets.top }]}>
+      <GlobalHeader includeSafeArea={false} />
 
       <ScrollView
         style={styles.scrollView}
